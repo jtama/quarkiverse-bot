@@ -1,0 +1,4 @@
+name: github-app-playground
+release:
+  current-version: 0.2.2
+  next-version: 0.2.3-SNAPSHOT
