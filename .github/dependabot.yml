@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # Enable version updates for mvn
+  - package-ecosystem: "mvn"
+    # Look for `pom.xml` file in the `root` directory
+    directory: "/"
+    # Check the mvn registry for updates every day (weekdays)
+    schedule:
+      interval: "daily"
