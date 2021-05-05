@@ -7,7 +7,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHIssueComment;
-import org.kohsuke.github.GitHub;
 import org.kohsuke.github.ReactionContent;
 
 import java.io.IOException;
@@ -22,12 +21,11 @@ public class CommentAddedTest {
 
     @Test
     void it_should_add_reaction_when_comment_is_linked_to_pr_and_starts_triger() throws IOException {
-        GitHub.offline();
         given()
                 .when().payloadFromClasspath("/comment-added-to-mr.json")
                 .event(GHEvent.ISSUE_COMMENT)
                 .then().github(mocks -> {
-            verify(mocks.ghObject(GHIssueComment.class, 871120314)).createReaction(ReactionContent.ROCKET);
+            verify(mocks.ghObject(GHIssueComment.class, 831750736)).createReaction(ReactionContent.ROCKET);
             verifyNoMoreInteractions(mocks.ghObjects());
         });
     }
