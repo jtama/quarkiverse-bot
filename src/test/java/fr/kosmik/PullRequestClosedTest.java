@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @QuarkusTest
 @QuarkusTestResource(GitHubAppTestingResource.class)
-public class CommentAddedTest {
+public class PullRequestClosedTest {
 
     @Test
     void it_should_add_reaction_when_comment_is_linked_to_pr_and_starts_trigger() throws IOException {
