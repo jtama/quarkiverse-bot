@@ -18,9 +18,9 @@ public class CommentAdded {
     private Predicate<GHEventPayload.IssueComment> isAskingRelease = issueComment -> issueComment.getComment().getBody().trim().toLowerCase().startsWith("@quarkiverse - release");
 
     public void onComment(@IssueComment.Created @IssueComment.Edited GHEventPayload.IssueComment issueComment) throws IOException {
-        /*if (botName.equals(StringUtils.substringBefore(issueComment.getComment().getUser().getLogin(), "[bot]"))) {
+        if (botName.equals(StringUtils.substringBefore(issueComment.getComment().getUser().getLogin(), "[bot]"))) {
             return;
-        }*/
+        }
         if (isIssueAttachedToMR.and(isAskingRelease).test(issueComment)) {
             issueComment.getComment().createReaction(ReactionContent.ROCKET);
         }

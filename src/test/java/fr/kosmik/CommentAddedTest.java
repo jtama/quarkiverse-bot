@@ -46,8 +46,6 @@ public class CommentAddedTest {
         given()
                 .when().payloadFromClasspath("/comment-added.json")
                 .event(GHEvent.ISSUE_COMMENT)
-                .then().github(mocks -> {
-            verifyNoMoreInteractions(mocks.ghObjects());
-        });
+                .then().github(mocks -> verifyNoMoreInteractions(mocks.ghObjects()));
     }
 }

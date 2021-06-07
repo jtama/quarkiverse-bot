@@ -6,8 +6,10 @@ import fr.kosmik.exception.GithubAPIException;
 import io.quarkiverse.githubapp.event.PullRequest;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.github.GHCommitPointer;
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHEventPayload;
+import org.kohsuke.github.GHFileNotFoundException;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHPullRequest;
@@ -51,14 +53,16 @@ public class PullRequestClosed {
         int issueNumber = issue.getNumber();
         CommandAndArgs ca = CommandAndArgs.from(issueComment.getBody().split(" - "));
         try {
-            String sha = pr.getBase().getSha();
-            String sourceBranch = pr.getBase().getRef();
+            GHCommitPointer base = pr.getBase();
+            String sha = base.getSha();
+            String sourceBranch = base.getRef();
             Project project = getProject(repository, sourceBranch);
             setTargetVersion(issue, ca, project);
-            String branchName = "release/" + project.release.nextVersion;
-            repository.createRef("refs/heads/" + branchName, sha);
+            String targetVersion = project.release.nextVersion;
+            String branchName = "release/" + targetVersion;
+            createBranch(issue, repository, branchName, sha);
             amendProjectDescription(repository, branchName, project);
-            repository.createPullRequest("Release " + project.release.nextVersion, branchName, sourceBranch, getPRDesc(repository, project.release.nextVersion, issueNumber), true);
+            repository.createPullRequest("Release " + targetVersion, branchName, sourceBranch, getPRDesc(project.name, targetVersion, issueNumber), true);
         } catch (IOException e) {
             throw GithubAPIException.fromIOException(e);
         }
@@ -70,8 +74,17 @@ public class PullRequestClosed {
         project.release.nextVersion = nextVersion;
     }
 
+    private void createBranch(GHIssue issue, GHRepository repository, String branchName, String sha) throws IOException {
+        String ref = "refs/heads/" + branchName;
+        try {
+            repository.createRef(ref, sha);
+        } catch (GHFileNotFoundException e) {
+            issue.comment(String.format("Ref %s already exists, or can't be created", ref));
+        }
+    }
+
     private void validateNextVersion(GHIssue issue, String nextVersion) throws IOException {
-        if (!nextVersion.matches("\\d+\\.\\d+\\.\\d+-[a-zA-Z]+")) {
+        if (!nextVersion.matches("\\d+\\.\\d+\\.\\d+(-[a-zA-Z].*)?")) {
             issue.comment(String.format("💢 Desired next version (%s) doesn't match expected template : `\\d+\\.\\d+\\.\\d+-[a-zA-Z]+`.\r\nWill not proceed.", nextVersion));
             throw new IllegalArgumentException();
         }
@@ -84,7 +97,13 @@ public class PullRequestClosed {
     private void amendProjectDescription(GHRepository repository, String branchName, Project project) throws IOException {
         project.release.currentVersion = getTargetVersion(project);
         project.release.nextVersion = computeNextVersion(project);
-        repository.createContent().content(objectMapper.writeValueAsString(project)).message(String.format("Updated current project version to `%s`", project.release.currentVersion)).path(PROJECT_CONFIGURATION_PATH).branch(branchName).sha(project.sha).commit();
+        repository.createContent()
+                .content(objectMapper.writeValueAsString(project))
+                .message(String.format("Updated current project version to `%s`", project.release.currentVersion))
+                .path(PROJECT_CONFIGURATION_PATH)
+                .branch(branchName)
+                .sha(project.sha)
+                .commit();
     }
 
     private String computeNextVersion(Project project) {
@@ -102,7 +121,7 @@ public class PullRequestClosed {
         }
     }
 
-    private String getPRDesc(GHRepository repo, String targetVersion, int issue) {
-        return String.format("## Release %s %s\r\nCloses #%s", repo.getName(), targetVersion, issue);
+    private String getPRDesc(String projectName, String targetVersion, int issue) {
+        return String.format("## Release %s %s\r\nCloses #%s", projectName, targetVersion, issue);
     }
 }
