@@ -1,6 +1,7 @@
 package fr.kosmik;
 
 
+import io.quarkiverse.githubapp.testing.GitHubAppTest;
 import io.quarkiverse.githubapp.testing.GithubAppTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @QuarkusTest
-@GithubAppTest(defaultAnswers = Answers.RETURNS_DEEP_STUBS)
+@GitHubAppTest(defaultAnswers = Answers.RETURNS_DEEP_STUBS)
 public class PullRequestClosedTest {
 
     @Test
