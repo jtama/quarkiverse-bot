@@ -1,8 +1,8 @@
 package fr.kosmik;
 
 
-import io.quarkiverse.githubapp.testing.GitHubAppTestingResource;
-import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkiverse.githubapp.testing.GitHubAppTest;
+import io.quarkiverse.githubapp.testing.GithubAppTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHEvent;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @QuarkusTest
-@QuarkusTestResource(GitHubAppTestingResource.class)
+@GitHubAppTest
 public class CommentAddedTest {
 
     @Test

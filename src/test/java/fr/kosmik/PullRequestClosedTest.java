@@ -1,18 +1,18 @@
 package fr.kosmik;
 
 
-import io.quarkiverse.githubapp.testing.GitHubAppTestingResource;
-import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkiverse.githubapp.testing.GitHubAppTest;
+import io.quarkiverse.githubapp.testing.GithubAppTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHContent;
-import org.kohsuke.github.GHContentUpdateResponse;
 import org.kohsuke.github.GHEvent;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueComment;
 import org.kohsuke.github.GHRef;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.ReactionContent;
+import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
@@ -25,12 +25,11 @@ import java.util.List;
 import static io.quarkiverse.githubapp.testing.GitHubAppTesting.given;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @QuarkusTest
-@QuarkusTestResource(DeepstubsGithubAppTestingResource.class)
+@GitHubAppTest(defaultAnswers = Answers.RETURNS_DEEP_STUBS)
 public class PullRequestClosedTest {
 
     @Test
