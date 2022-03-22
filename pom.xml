@@ -18,7 +18,7 @@
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
         <quarkus.platform.version>2.7.4.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-        <quarkus-github-app.version>1.7.2</quarkus-github-app.version>
+        <quarkus-github-app.version>1.7.3</quarkus-github-app.version>
     </properties>
     <dependencyManagement>
         <dependencies>
